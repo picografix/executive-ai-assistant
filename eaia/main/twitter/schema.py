@@ -9,7 +9,7 @@ from langgraph.graph import add_messages
 
 class TweetData(TypedDict):
     id: str
-    tweet_handle: str
+    from_handle: str
     tweet_content: str
     media: str
     send_time: str
@@ -18,7 +18,7 @@ class RespondTo(BaseModel):
     logic: str = Field(
         description="logic on WHY the response choice is the way it is", default=""
     )
-    response: Literal["no", "email", "notify", "question"] = "no"
+    response: Literal["no", "tweet", "notify", "question"] = "no"
 
 class ResponseTweetDraft(BaseModel):
     """Draft of an tweet to send as a response."""
@@ -59,11 +59,11 @@ def convert_obj(o, m):
         return m
 
 class State(TypedDict):
-    email: TweetData
+    tweet: TweetData
     triage: Annotated[RespondTo, convert_obj]
     messages: Annotated[List[AnyMessage], add_messages]
 
 tweet_template = """from: {tweet_handle}
-To: {to_email}
+To: {to_handle} 
 {tweet_content}
 """
